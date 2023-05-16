@@ -15,8 +15,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.route('/').get((req, res) => {
-  res.render('pug/index.pug');
-  res.render('load your view here');
+  res.render('pug/index')
 
 });
 
