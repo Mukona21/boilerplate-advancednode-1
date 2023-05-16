@@ -7,6 +7,8 @@ const fccTesting = require('./freeCodeCamp/fcctesting.js');
 const app = express();
 
 app.set('view engine', 'pug');
+app.set('views', './views/pug');
+
 
 fccTesting(app); //For FCC testing purposes
 app.use('/public', express.static(process.cwd() + '/public'));
