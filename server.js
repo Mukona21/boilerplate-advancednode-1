@@ -1,5 +1,6 @@
 'use strict';
 require('dotenv').config();
+const main = require('./connection.js');
 const express = require('express');
 const session = require('express-session');
 const passport = require('passport');
@@ -32,10 +33,14 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser((id, done) => {
-  myDB.findOne({ _id: new ObjectID(id) }, (err, user) => {
-    done(err, user);
-  });
+  main(async (client) => {
+    const db = client.db('your_database_name'); 
+    const users = db.collection('users');
+    const user = await users.findOne({ _id: new ObjectID(id) });
+    done(null, user);
+  }).catch(err => done(err, null));
 });
+
 
 
 app.route('/').get((req, res) => {
