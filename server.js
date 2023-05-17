@@ -3,6 +3,7 @@ require('dotenv').config();
 const express = require('express');
 const session = require('express-session');
 const passport = require('passport');
+const { ObjectID } = require('mongodb'); // Added ObjectID import
 const myDB = require('./connection.js');
 const fccTesting = require('./freeCodeCamp/fcctesting.js');
 
@@ -26,8 +27,18 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
+passport.serializeUser((user, done) => {
+  done(null, user._id);
+});
+
+passport.deserializeUser((id, done) => {
+  myDB.findOne({ _id: new ObjectID(id) }, (err, user) => { // Updated to fetch user document
+    done(err, user);
+  });
+});
+
 app.route('/').get((req, res) => {
-   res.render('index', { title: 'Hello', message: 'Please log in' });
+  res.render('index', { title: 'Hello', message: 'Please log in' });
 });
 
 const PORT = process.env.PORT || 3000;
