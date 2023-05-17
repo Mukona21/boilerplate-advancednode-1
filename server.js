@@ -4,7 +4,7 @@ const main = require('./connection.js');
 const express = require('express');
 const session = require('express-session');
 const passport = require('passport');
-const { ObjectID } = require('mongodb'); // Added ObjectID import
+const { ObjectID } = require('mongodb');
 
 const fccTesting = require('./freeCodeCamp/fcctesting.js');
 
@@ -34,20 +34,22 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser((id, done) => {
   main(async (client) => {
-    const db = client.db('your_database_name'); 
+    const db = client.db('myappdb');
     const users = db.collection('users');
     const user = await users.findOne({ _id: new ObjectID(id) });
     done(null, user);
   }).catch(err => done(err, null));
 });
 
-
-
 app.route('/').get((req, res) => {
   res.render('index', { title: 'Hello', message: 'Please log in' });
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log('Listening on port ' + PORT);
+main(async (client) => {
+  app.listen(PORT, () => {
+    console.log('Listening on port ' + PORT);
+  });
+}).catch(error => {
+  console.error('Error connecting to MongoDB:', error);
 });
