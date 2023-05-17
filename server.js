@@ -33,12 +33,9 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser((id, done) => {
-  main(async (client) => {
-    const db = client.db('myappdb');
-    const users = db.collection('users');
-    const user = await users.findOne({ _id: new ObjectID(id) });
-    done(null, user);
-  }).catch(err => done(err, null));
+  // myDataBase.findOne({ _id: new ObjectID(id) }, (err, doc) => {
+    done(null, null);
+  // });
 });
 
 app.route('/').get((req, res) => {
