@@ -31,11 +31,7 @@ passport.serializeUser((user, done) => {
   done(null, user._id);
 });
 
-passport.deserializeUser((id, done) => {
-  myDB.findOne({ _id: new ObjectID(id) }, (err, user) => { // Updated to fetch user document
-    done(err, user);
-  });
-});
+
 
 app.route('/').get((req, res) => {
   res.render('index', { title: 'Hello', message: 'Please log in' });
