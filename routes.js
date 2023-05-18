@@ -16,7 +16,7 @@ module.exports = function (app, myDataBase) {
     res.redirect('/profile');
   });
 
-  app.route('/profile').get(ensureAuthenticated, (req,res) => {
+  app.route('/profile').get(ensureAuthenticated, (req, res) => {
     res.render('profile', { username: req.user.username });
   });
 
@@ -33,45 +33,42 @@ module.exports = function (app, myDataBase) {
       } else if (user) {
         res.redirect('/');
       } else {
-        myDataBase.insertOne({
-          username: req.body.username,
-          password: hash
-        },
+        myDataBase.insertOne(
+          {
+            username: req.body.username,
+            password: hash
+          },
           (err, doc) => {
             if (err) {
               res.redirect('/');
             } else {
-              // The inserted document is held within
-              // the ops property of the doc
+              // The inserted document is held within the ops property of the doc
               next(null, doc.ops[0]);
             }
           }
-        )
+        );
       }
-    })
-  },
-    passport.authenticate('local', { failureRedirect: '/' }),
-    (req, res, next) => {
-      res.redirect('/profile');
-    }
-  );
+    });
+  }, passport.authenticate('local', { failureRedirect: '/' }), (req, res, next) => {
+    res.redirect('/profile');
+  });
 
   app.route('/auth/github').get(passport.authenticate('github'));
   app.route('/auth/github/callback').get(passport.authenticate('github', { failureRedirect: '/' }), (req, res) => {
     req.session.user_id = req.user.id;
-    res.redirect("/chat");
-  })
+    res.redirect('/chat');
+  });
 
   app.use((req, res, next) => {
     res.status(404)
       .type('text')
       .send('Not Found');
   });
-}
+};
 
 function ensureAuthenticated(req, res, next) {
-    if (req.isAuthenticated()) {
-        return next();
-    }
-    res.redirect('/');
-};
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect('/');
+}
